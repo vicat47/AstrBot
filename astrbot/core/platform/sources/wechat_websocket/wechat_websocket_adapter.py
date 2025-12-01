@@ -254,8 +254,8 @@ class WeChatWebsocketAdapter(Platform):
             return None
 
 
-        from_user_id = raw_message.get("wxid", {}).get("str", "")
-        content = raw_message.get("content", {}).get("str", "")
+        from_user_id = raw_message.get("wxid", "")
+        content = raw_message.get("content", "")
         msg_type = raw_message.get("type")
 
         abm.message_str = ""

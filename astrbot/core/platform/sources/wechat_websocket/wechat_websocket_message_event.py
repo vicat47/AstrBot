@@ -1,4 +1,5 @@
 import asyncio
+import json
 from datetime import datetime
 from typing import AsyncGenerator, TYPE_CHECKING
 
@@ -41,7 +42,7 @@ class WeChatWebsocketMessageEvent(AstrMessageEvent):
                 "type": 555,
                 "roomid": "null",
                 "wxid": "null",
-                "content": "1",
+                "content": f"{text}",
                 "nickname": "null",
                 "ext": "null"
             }
@@ -75,8 +76,9 @@ class WeChatWebsocketMessageEvent(AstrMessageEvent):
     async def _post(self, session, url, payload):
         try:
             async with session.post(url, json=payload) as resp:
-                data = await resp.json()
-                if resp.status != 200 or data.get("Code") != 200:
+                data = await resp.text()
+                data = json.loads(data)
+                if resp.status != 200 or data.get("status") != "SUCCSESSED":
                     logger.error(f"{url} failed: {resp.status} {data}")
         except Exception as e:
             logger.error(f"{url} error: {e}")
