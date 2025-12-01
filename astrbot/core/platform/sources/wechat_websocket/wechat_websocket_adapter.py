@@ -96,7 +96,7 @@ class WeChatWebsocketAdapter(Platform):
         # 设置文本缓存大小限制
         self.max_text_cache = 100
 
-    async def run(self) -> Awaitable[Any]:
+    async def run(self) -> None:
         """启动平台适配器的运行实例。"""
         logger.info(f"{self.metadata.name} 适配器正在启动...")
 
