@@ -1,6 +1,6 @@
 import asyncio
 from datetime import datetime
-from typing import AsyncGenerator
+from typing import AsyncGenerator, TYPE_CHECKING
 
 import aiohttp
 
@@ -8,7 +8,9 @@ from astrbot import logger
 from astrbot.core.message.components import Plain
 from astrbot.core.message.message_event_result import MessageChain
 from astrbot.core.platform import AstrMessageEvent, AstrBotMessage, PlatformMetadata, MessageType
-from astrbot.core.platform.sources.wechat_websocket.wechat_websocket_adapter import WeChatWebsocketAdapter
+
+if TYPE_CHECKING:
+    from .wechat_websocket_adapter import WeChatWebsocketAdapter
 
 # TODO: 完善代码
 class WeChatWebsocketMessageEvent(AstrMessageEvent):

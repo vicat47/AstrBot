@@ -323,6 +323,13 @@ CONFIG_METADATA_2 = {
                         "satori_heartbeat_interval": 10,
                         "satori_reconnect_delay": 5,
                     },
+                    "wechat-websocket": {
+                        "id": "wechat-websocket",
+                        "type": "wechat-websocket",
+                        "enable": True,
+                        "host": "这里填写你的局域网IP或者公网服务器IP",
+                        "port": 8059,
+                    },
                     # "WebChat": {
                     #     "id": "webchat",
                     #     "type": "webchat",

@@ -7,7 +7,7 @@ import traceback
 from asyncio import Queue
 from datetime import datetime
 from enum import Enum
-from typing import Awaitable, Any, List
+from typing import List
 from xml.etree.ElementTree import Element
 
 import aiohttp
@@ -20,6 +20,7 @@ from astrbot.core.message.message_event_result import MessageChain
 from astrbot.core.platform import Platform, AstrMessageEvent, PlatformMetadata, AstrBotMessage, MessageType, \
     MessageMember
 from astrbot.core.platform.message_session import MessageSesion
+from astrbot.core.platform.register import register_platform_adapter
 from astrbot.core.platform.sources.wechat_websocket.wechat_websocket_message_event import WeChatWebsocketMessageEvent
 
 
@@ -48,6 +49,10 @@ class WechatWebsocketMessageType(Enum):
     CHAOS_TYPE = 49
 
 # TODO: 完善代码
+@register_platform_adapter("wechat-websocket", "wechat-websocket 适配器", default_config_tmpl={
+    "host": "your_token",
+    "port": "your_port",
+})
 class WeChatWebsocketAdapter(Platform):
 
     def __init__(
@@ -85,10 +90,6 @@ class WeChatWebsocketAdapter(Platform):
         self.nickname = None
         self.head_pic = None
         self.ws_handle_task = None
-
-
-        self.client_id = platform_config["client_id"]
-        self.client_secret = platform_config["client_secret"]
 
         # 添加文本消息缓存，用于引用消息处理
         """缓存文本消息。key是NewMsgId (对应引用消息的svrid)，value是消息文本内容"""
@@ -148,7 +149,7 @@ class WeChatWebsocketAdapter(Platform):
 
     async def check_online_status(self):
         url = f"{self.base_url}/api/get_personal_info"
-        params = {
+        data = {
             "para": {
                 "id": f"{int(datetime.now().timestamp())}",
                 "type": 6500,
@@ -161,8 +162,9 @@ class WeChatWebsocketAdapter(Platform):
         }
         async with aiohttp.ClientSession() as session:
             try:
-                async with session.get(url, params=params) as response:
-                    response_data = await response.json()
+                async with session.get(url, json=data) as response:
+                    response_data = await response.text()
+                    response_data = json.loads(response_data)
                     if response.status == 200 and response_data.get("status") == "SUCCSESSED":
                         person_info = json.loads(response_data.get("content"))
                         self.wxid = person_info.get("wx_id")
